@@ -9,7 +9,6 @@ def recommend_best_options(df, classifier_path, regressor_path):
     Returns a DataFrame with recommendations.
     """
     # Load models
-    classifier = load_model(classifier_path)
     regressor = load_model(regressor_path)
 
     numerical = ['CPC']
@@ -22,22 +21,17 @@ def recommend_best_options(df, classifier_path, regressor_path):
     recommendations = []
 
     for key, group in groups:
-        best_score = -np.inf
+        lowest_est_cpa = 1000000
         best_market = None
         best_publisher = None
 
         for (market, publisher), subset in group.groupby(['market_id', 'publisher']):
             X = subset[numerical + categorical]
-            conv_prob = classifier.predict_proba(X)[:, 1].mean()
 
             est_cpa = regressor.predict(X).mean()
-            if np.isnan(est_cpa) or est_cpa <= 1e-3:
-                est_cpa = 1.0  # assign a default CPA to avoid division issues
 
-            score = conv_prob / est_cpa
-
-            if score > best_score:
-                best_score = score
+            if est_cpa > lowest_est_cpa:
+                lowest_est_cpa = est_cpa
                 best_market = market
                 best_publisher = publisher
 
@@ -47,7 +41,7 @@ def recommend_best_options(df, classifier_path, regressor_path):
             "category_id": key[2],
             "recommended_market_id": best_market,
             "recommended_publisher": best_publisher,
-            "score": best_score
+            "lowest_est_cpa": lowest_est_cpa
         })
 
     return pd.DataFrame(recommendations)
@@ -57,7 +51,6 @@ if __name__ == "__main__":
     df = pd.read_csv("data/ds_challenge_data.csv")
     result_df = recommend_best_options(
         df,
-        classifier_path="models/xgb_classifier.pkl",
         regressor_path="models/xgb_regressor.pkl"
     )
     print(result_df.head())

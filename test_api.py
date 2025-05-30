@@ -10,7 +10,7 @@ data = {
     "publisher": "2b764",
     "customer_id": "746",
     "market_id": "12733593",
-    "conversions": 1
+#    "conversions": 1
 }
 
 response = requests.post(url, json=data)

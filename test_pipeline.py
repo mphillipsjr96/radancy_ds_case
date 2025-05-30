@@ -12,17 +12,9 @@ categorical = ['category_id', 'industry', 'publisher', 'customer_id', 'market_id
 X_sample = sample[numerical + categorical]
 
 # Load models
-classifier = load_model("models/xgb_classifier.pkl")
 regressor = load_model("models/xgb_regressor.pkl")
 
-# Predict conversion
-conversion_preds = classifier.predict_proba(X_sample)[:, 1]  # probability of conversion
-print("Conversion Probabilities:\n", conversion_preds)
-
 # Predict CPA only where conversion is likely
-likely_conversions = X_sample[conversion_preds > 0.5]
-if not likely_conversions.empty:
-    cpa_preds = regressor.predict(likely_conversions)
-    print("\nPredicted CPAs:\n", cpa_preds)
-else:
-    print("\nNo likely conversions to predict CPA.")
+cpa_preds = regressor.predict(X_sample)
+print("\nPredicted CPAs:\n", cpa_preds)
+
