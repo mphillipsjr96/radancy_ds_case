@@ -1,4 +1,3 @@
-# test_api.py
 import requests
 
 url = "http://localhost:8000/predict"
