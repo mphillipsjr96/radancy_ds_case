@@ -7,7 +7,7 @@ data = pd.read_csv("data/ds_challenge_data.csv")
 data = preprocess_data(data)
 sample = data.sample(5, random_state=42)  # grab a few rows
 
-numerical = ['cost', 'clicks', 'impressions', 'CPC']
+numerical = ['CPC']
 categorical = ['category_id', 'industry', 'publisher', 'customer_id', 'market_id']
 X_sample = sample[numerical + categorical]
 
