@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy dependency files
 COPY requirements.txt ./
 
-# Install dependencies (prefer Poetry, fallback to pip)
+# Install dependencies
 RUN pip install --upgrade pip 
 RUN pip install --no-cache-dir -r requirements.txt
 

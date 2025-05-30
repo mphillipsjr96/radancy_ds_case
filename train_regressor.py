@@ -4,6 +4,7 @@ from preprocessing import preprocess_data, build_pipeline
 from utils import save_model
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 import numpy as np
 
 # Load data
@@ -28,6 +29,7 @@ reg_pipeline.fit(X_train, y_train)
 # Predict on test set
 y_pred_log = reg_pipeline.predict(X_test)
 y_pred = np.expm1(y_pred_log)
+
 # Metrics
 mae = mean_absolute_error(np.expm1(y_test), np.expm1(y_pred_log))
 rmse = np.sqrt(mean_squared_error(np.expm1(y_test), np.expm1(y_pred_log)))
