@@ -3,7 +3,7 @@ import numpy as np
 from utils import load_model
 from preprocessing import preprocess_data
 
-def recommend_best_options(df, classifier_path, regressor_path):
+def recommend_best_options(df, regressor_path):
     """
     For each (customer_id, industry, category_id), find the best market_id and publisher.
     Returns a DataFrame with recommendations.
@@ -28,9 +28,9 @@ def recommend_best_options(df, classifier_path, regressor_path):
         for (market, publisher), subset in group.groupby(['market_id', 'publisher']):
             X = subset[numerical + categorical]
 
-            est_cpa = regressor.predict(X).mean()
+            est_cpa = np.expm1(regressor.predict(X).mean())
 
-            if est_cpa > lowest_est_cpa:
+            if est_cpa < lowest_est_cpa:
                 lowest_est_cpa = est_cpa
                 best_market = market
                 best_publisher = publisher

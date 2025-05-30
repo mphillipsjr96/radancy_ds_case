@@ -38,3 +38,18 @@ def build_pipeline(numerical_features, categorical_features, model):
     ])
 
     return pipeline
+def add_group_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Add group-level average CPA features to the dataframe.
+    These represent historical average CPAs for customer, industry, and category.
+    """
+    # Avoid leakage by excluding the current row from its own group average
+    for group in ['customer_id', 'industry', 'category_id']:
+        group_avg = (
+            df.groupby(group)['CPA']
+            .transform(lambda x: (x.sum() - x) / (x.count() - 1).clip(lower=1))
+            .fillna(df['CPA'].mean())  # Handle any NaN with global mean
+        )
+        df[f'{group}_avg_cpa'] = group_avg
+
+    return df
